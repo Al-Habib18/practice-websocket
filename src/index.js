@@ -13,10 +13,16 @@ const httpServer = http.createServer(app);
 // Socket connection
 const io = new Server(httpServer);
 
-io.on("connection", () => {
+io.on("connection", (socket) => {
     console.log("Socket Server connected");
 
-    socket.emit("message", "welcome to chat app");
+    socket.on("message", (data) => {
+        socket.broadcast.emit("send-message", data);
+    });
+
+    socket.on("activity", (name) => {
+        socket.broadcast.emit("send-activity", name);
+    });
 
     io.on("disconnect", () => {
         console.log("Socket Server disconnected");
